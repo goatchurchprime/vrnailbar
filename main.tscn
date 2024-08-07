@@ -1,0 +1,174 @@
+[gd_scene load_steps=26 format=3 uid="uid://bjynpo22pmh6y"]
+
+[ext_resource type="Script" path="res://main.gd" id="1_e1dgm"]
+[ext_resource type="PackedScene" uid="uid://ctltchlf2j2r4" path="res://addons/xr-simulator/XRSimulator.tscn" id="1_roqg7"]
+[ext_resource type="Script" path="res://brush.gd" id="2_0h3nx"]
+[ext_resource type="PackedScene" uid="uid://bbifviry22021" path="res://Hand_low_L.gltf" id="2_1cyse"]
+[ext_resource type="PackedScene" uid="uid://d20xy80xd171g" path="res://addons/xr-autohandtracker/OpenXRHandData.tscn" id="2_1pg5r"]
+[ext_resource type="PackedScene" uid="uid://bufelcry36rw1" path="res://addons/xr-autohandtracker/auto_handtracker.tscn" id="3_o0v7i"]
+[ext_resource type="Script" path="res://brushpaint.gd" id="5_2bqh8"]
+[ext_resource type="PackedScene" uid="uid://domji4c2dw41d" path="res://Hand_low_R.gltf" id="5_jp066"]
+[ext_resource type="Script" path="res://node_2d.gd" id="6_e7eym"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dv100"]
+
+[sub_resource type="Sky" id="Sky_xdg2c"]
+sky_material = SubResource("ProceduralSkyMaterial_dv100")
+
+[sub_resource type="Environment" id="Environment_irs82"]
+background_mode = 2
+sky = SubResource("Sky_xdg2c")
+
+[sub_resource type="QuadMesh" id="QuadMesh_fs12w"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_t2emt"]
+viewport_path = NodePath("SubViewport")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_02lhs"]
+resource_local_to_scene = true
+albedo_texture = SubResource("ViewportTexture_t2emt")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pas3g"]
+top_radius = 0.01
+bottom_radius = 0.001
+height = 0.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wdlwg"]
+albedo_color = Color(0.635758, 0.000359633, 0.65124, 1)
+metallic = 1.0
+roughness = 0.53
+disable_receive_shadows = true
+
+[sub_resource type="SphereMesh" id="SphereMesh_7pdvy"]
+radius = 0.1
+height = 0.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mlpxy"]
+shading_mode = 0
+albedo_color = Color(0.94902, 0.0313726, 0.0196078, 1)
+
+[sub_resource type="Environment" id="Environment_23mhs"]
+background_mode = 1
+background_color = Color(1, 0.663055, 0.610475, 1)
+
+[sub_resource type="World3D" id="World3D_q4bt1"]
+environment = SubResource("Environment_23mhs")
+
+[sub_resource type="Gradient" id="Gradient_4pgbd"]
+colors = PackedColorArray(0.593134, 0.593134, 0.593134, 1, 1, 1, 1, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_q5230"]
+metadata/_preview_in_3d_space_ = true
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_cpx4c"]
+color_ramp = SubResource("Gradient_4pgbd")
+noise = SubResource("FastNoiseLite_q5230")
+
+[sub_resource type="Curve" id="Curve_wnqph"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.990278, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="Main" type="Node3D"]
+script = ExtResource("1_e1dgm")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_irs82")
+
+[node name="XROrigin3D" type="XROrigin3D" parent="."]
+
+[node name="OpenXRHandData" parent="XROrigin3D" instance=ExtResource("2_1pg5r")]
+
+[node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
+transform = Transform3D(0.980025, 0, 0.198872, 0, 1, 0, -0.198872, 0, 0.980025, 0, 0.802956, 0)
+
+[node name="XRController3DLeft" type="XRController3D" parent="XROrigin3D"]
+transform = Transform3D(0.99899, 0, 0.0449271, 0, 1, 0, -0.0449271, 0, 0.99899, 0, 0.643961, -0.325716)
+tracker = &"left_hand"
+
+[node name="ViewportMesh" type="MeshInstance3D" parent="XROrigin3D/XRController3DLeft"]
+transform = Transform3D(0.25, 0, 0, 0, 0.176777, 0.176777, 0, -0.176777, 0.176777, 0, 0, 0.1)
+mesh = SubResource("QuadMesh_fs12w")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_02lhs")
+
+[node name="Hand_low_L" parent="XROrigin3D/XRController3DLeft" instance=ExtResource("2_1cyse")]
+
+[node name="AutoHandtracker" parent="XROrigin3D/XRController3DLeft" instance=ExtResource("3_o0v7i")]
+visiblehandtrackskeletonRaw = false
+
+[node name="XRController3DRight" type="XRController3D" parent="XROrigin3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.174373, 0.816067, -0.170848)
+tracker = &"right_hand"
+
+[node name="Brush" type="Node3D" parent="XROrigin3D/XRController3DRight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.0950764)
+script = ExtResource("2_0h3nx")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="XROrigin3D/XRController3DRight/Brush"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.05)
+mesh = SubResource("CylinderMesh_pas3g")
+surface_material_override/0 = SubResource("StandardMaterial3D_wdlwg")
+
+[node name="Hand_low_R" parent="XROrigin3D/XRController3DRight" instance=ExtResource("5_jp066")]
+
+[node name="AutoHandtracker" parent="XROrigin3D/XRController3DRight" instance=ExtResource("3_o0v7i")]
+visiblehandtrackskeletonRaw = false
+
+[node name="XRSimulator" parent="XROrigin3D" instance=ExtResource("1_roqg7")]
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.317839, 1.71884, -0.779254)
+shadow_enabled = true
+shadow_bias = 0.02
+
+[node name="RedCone" type="MeshInstance3D" parent="OmniLight3D"]
+mesh = SubResource("SphereMesh_7pdvy")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_mlpxy")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+disable_3d = true
+world_3d = SubResource("World3D_q4bt1")
+render_target_clear_mode = 1
+render_target_update_mode = 1
+
+[node name="Background" type="Polygon2D" parent="SubViewport"]
+scale = Vector2(200, 200)
+color = Color(0.989265, 0.605303, 0.625289, 1)
+texture = SubResource("NoiseTexture2D_cpx4c")
+texture_offset = Vector2(1, 1)
+texture_scale = Vector2(200, 200)
+polygon = PackedVector2Array(-1, -1, 1, -1, 1, 1)
+
+[node name="Camera2D" type="Camera2D" parent="SubViewport"]
+
+[node name="Polygon2D" type="Polygon2D" parent="SubViewport"]
+scale = Vector2(5, 50)
+color = Color(0.0784314, 0.937255, 0.537255, 1)
+antialiased = true
+polygon = PackedVector2Array(0, 0, 1, 1, -1, 1)
+
+[node name="Polygon2D2" type="Polygon2D" parent="SubViewport"]
+position = Vector2(90, 0)
+color = Color(0.3669, 0.557849, 0.95964, 1)
+antialiased = true
+polygon = PackedVector2Array(0, 0, 5, 50, -5, 45)
+
+[node name="Line2D" type="Line2D" parent="SubViewport"]
+position = Vector2(-40, -80)
+rotation = 0.349066
+points = PackedVector2Array(0, 0, 0, -50)
+width_curve = SubResource("Curve_wnqph")
+default_color = Color(0.895953, 0.895754, 0, 1)
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[node name="Node2D" type="Node2D" parent="SubViewport"]
+script = ExtResource("6_e7eym")
+
+[node name="BrushPaint" type="Node2D" parent="SubViewport"]
+script = ExtResource("5_2bqh8")
+
+[node name="SpawnCamera" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.907734, -0.242984)

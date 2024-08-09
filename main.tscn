@@ -103,10 +103,6 @@ transform = Transform3D(0.980025, 0, 0.198872, 0, 1, 0, -0.198872, 0, 0.980025, 
 transform = Transform3D(0.99899, 0, 0.0449271, 0, 1, 0, -0.0449271, 0, 0.99899, 0, 0.643961, -0.325716)
 tracker = &"left_hand"
 
-[node name="RemoteTransform3D" type="RemoteTransform3D" parent="XROrigin3D/XRController3DLeft"]
-transform = Transform3D(0.25, 0, 0, 0, 0.176777, 0.176777, 0, -0.176777, 0.176777, 0, 0, 0.1)
-remote_path = NodePath("../../../ViewportMesh")
-
 [node name="Hand_low_L" parent="XROrigin3D/XRController3DLeft" instance=ExtResource("2_1cyse")]
 
 [node name="AutoHandtracker" parent="XROrigin3D/XRController3DLeft" instance=ExtResource("3_o0v7i")]

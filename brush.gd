@@ -1,7 +1,7 @@
 extends Node3D
 
 
-@onready var paintplane = get_node("/root/Main/XROrigin3D/XRController3DLeft/ViewportMesh")
+@onready var paintplane = get_node("/root/Main/ViewportMesh")
 @onready var viewportbrush = get_node("/root/Main/SubViewport/BrushPaint")
 
 func _ready():

@@ -4,6 +4,10 @@ extends Node3D
 @onready var paintplane = get_node("/root/Main/ViewportMesh")
 @onready var viewportbrush = get_node("/root/Main/SubViewport/BrushPaint")
 
+func colorcycle():
+	viewportbrush.icolor = (viewportbrush.icolor + 1) % len(viewportbrush.colorcycle)
+	viewportbrush.color = viewportbrush.colorcycle[viewportbrush.icolor]
+	$BrushAngle/BrushActual/MeshInstance3D.get_surface_override_material(0).albedo_color = viewportbrush.color
 
 func _process(delta):
 	var brushtip = $BrushAngle/BrushActual.global_transform.origin

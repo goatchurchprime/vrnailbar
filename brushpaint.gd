@@ -12,18 +12,10 @@ var sz = Vector2()
 func _ready():
 	sz = Vector2(get_parent().size.x, -get_parent().size.y)
 
-var bcornertouch = false
 func brushpos(bp0, bp1):
 	if bp0.z < 0 and bp1.z > 0:
 		var lam = inverse_lerp(bp0.z, bp1.z, 0.0)
 		var bpm = lerp(Vector2(bp0.x, bp0.y), Vector2(bp1.x, bp1.y), lam)
-		
-		var lbcornertouch = bpm.x < -0.45 and bpm.y < -0.45
-		if lbcornertouch and not bcornertouch:
-			icolor = (icolor + 1) % len(colorcycle)
-			color = colorcycle[icolor]
-		bcornertouch = lbcornertouch
-		
 		#prints(lam)
 		p0 = Vector2(bp0.x, bp0.y)*sz
 		p1 = Vector2(bpm.x, bpm.y)*sz

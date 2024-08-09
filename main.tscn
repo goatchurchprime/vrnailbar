@@ -191,6 +191,12 @@ transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, -0.638,
 [node name="Label3D" parent="ViewportMesh/ButtonL" index="0"]
 text = "L"
 
+[node name="ButtonP" parent="ViewportMesh" instance=ExtResource("9_66mbh")]
+transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, -0.567008, -0.413258, 0.00225759)
+
+[node name="Label3D" parent="ViewportMesh/ButtonP" index="0"]
+text = "P"
+
 [node name="Brush" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.174373, 0.816067, -0.265924)
 script = ExtResource("2_0h3nx")
@@ -274,3 +280,4 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.907734, -0.242984)
 [editable path="ViewportMesh/ButtonC"]
 [editable path="ViewportMesh/ButtonD"]
 [editable path="ViewportMesh/ButtonL"]
+[editable path="ViewportMesh/ButtonP"]

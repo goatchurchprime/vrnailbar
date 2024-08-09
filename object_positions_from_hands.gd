@@ -64,6 +64,8 @@ func letterbutton(t, pressed):
 		ba.get_node("BrushActual").transform.origin.z -= 0.01
 	if t == "O":
 		ba.get_node("BrushActual").transform.origin.z += 0.01
+	if t == "P":
+		bm.colorcycle()
 		
 
 const modalletters = [ "L" ]

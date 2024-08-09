@@ -36,11 +36,11 @@ shader_parameter/orbbrightcolour = Color(1, 0, 0, 0.9)
 shader_parameter/orbdropoff = 0.03
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_gyay1"]
-radius = 0.01
+radius = 0.005
 
 [sub_resource type="SphereMesh" id="SphereMesh_vnqdd"]
-radius = 0.01
-height = 0.02
+radius = 0.002
+height = 0.004
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sq61f"]
 albedo_color = Color(1, 1, 0.0431373, 1)
@@ -150,38 +150,60 @@ skeleton = NodePath("../XROrigin3D")
 surface_material_override/0 = SubResource("StandardMaterial3D_02lhs")
 
 [node name="ButtonG" parent="ViewportMesh" instance=ExtResource("9_66mbh")]
+transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, -0.0983026, -0.596874, -0.00312603)
 
 [node name="Label3D" parent="ViewportMesh/ButtonG" index="0"]
 text = "G"
 
 [node name="ButtonH" parent="ViewportMesh" instance=ExtResource("9_66mbh")]
-transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0.258229, -0.608212, 0.00821197)
+transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0.0749664, -0.602384, 0.00238431)
 
 [node name="Label3D" parent="ViewportMesh/ButtonH" index="0"]
 text = "H"
 
+[node name="ButtonI" parent="ViewportMesh" instance=ExtResource("9_66mbh")]
+transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0.248548, -0.607904, 0.00790429)
+
+[node name="Label3D" parent="ViewportMesh/ButtonI" index="0"]
+text = "I"
+
+[node name="ButtonO" parent="ViewportMesh" instance=ExtResource("9_66mbh")]
+transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0.385159, -0.612249, 0.0122486)
+
+[node name="Label3D" parent="ViewportMesh/ButtonO" index="0"]
+text = "O"
+
 [node name="ButtonC" parent="ViewportMesh" instance=ExtResource("9_66mbh")]
-transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, -0.400119, -0.587276, -0.0127238)
+transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, -0.441368, -0.585964, -0.0140356)
 
 [node name="Label3D" parent="ViewportMesh/ButtonC" index="0"]
 text = "C"
 
 [node name="ButtonD" parent="ViewportMesh" instance=ExtResource("9_66mbh")]
-transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, -0.215947, -0.593133, -0.00686705)
+transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, -0.270453, -0.5914, -0.00860035)
 
 [node name="Label3D" parent="ViewportMesh/ButtonD" index="0"]
 text = "D"
+
+[node name="ButtonL" parent="ViewportMesh" instance=ExtResource("9_66mbh")]
+transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, -0.638, 0.258, 0)
+
+[node name="Label3D" parent="ViewportMesh/ButtonL" index="0"]
+text = "L"
 
 [node name="Brush" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.174373, 0.816067, -0.265924)
 script = ExtResource("2_0h3nx")
 
-[node name="BrushActual" type="Node3D" parent="Brush"]
+[node name="BrushAngle" type="Node3D" parent="Brush"]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Brush/BrushActual"]
+[node name="BrushActual" type="Node3D" parent="Brush/BrushAngle"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.05)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Brush/BrushAngle/BrushActual"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.05)
 mesh = SubResource("CylinderMesh_pas3g")
-skeleton = NodePath("../..")
+skeleton = NodePath("../../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_wdlwg")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
@@ -242,9 +264,13 @@ script = ExtResource("5_2bqh8")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.907734, -0.242984)
 
 [connection signal="area_entered" from="Poke" to="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands" method="_on_poke_area_entered"]
+[connection signal="area_exited" from="Poke" to="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands" method="_on_poke_area_exited"]
 
 [editable path="XROrigin3D/XRController3DRight/Hand_low_R"]
 [editable path="ViewportMesh/ButtonG"]
 [editable path="ViewportMesh/ButtonH"]
+[editable path="ViewportMesh/ButtonI"]
+[editable path="ViewportMesh/ButtonO"]
 [editable path="ViewportMesh/ButtonC"]
 [editable path="ViewportMesh/ButtonD"]
+[editable path="ViewportMesh/ButtonL"]

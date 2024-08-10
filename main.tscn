@@ -175,11 +175,12 @@ mesh = SubResource("BoxMesh_kl0p8")
 surface_material_override/0 = SubResource("StandardMaterial3D_rtkbx")
 
 [node name="InnerRod" type="MeshInstance3D" parent="ElasticWire/Rod"]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("BoxMesh_8i7a8")
 surface_material_override/0 = SubResource("StandardMaterial3D_lr6y6")
 
 [node name="Marker" type="MeshInstance3D" parent="ElasticWire/Rod"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.4)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.2)
 mesh = SubResource("BoxMesh_hayjf")
 surface_material_override/0 = SubResource("StandardMaterial3D_tnbpm")
 
@@ -191,7 +192,6 @@ script = ExtResource("2_0h3nx")
 transform = Transform3D(-0.173648, -0.416198, 0.892539, 0, 0.906308, 0.422618, -0.984808, 0.0733869, -0.157379, 0, 0, 0)
 
 [node name="BrushActual" type="Node3D" parent="Brush/BrushAngle"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.05)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Brush/BrushAngle/BrushActual"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.05)

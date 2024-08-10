@@ -8,6 +8,7 @@ extends Node
 @onready var bm = get_node("/root/Main/Brush")
 @onready var poke = get_node("/root/Main/Poke")
 @onready var elasticwire = get_node("/root/Main/ElasticWire")
+var brushfilter = 0.12
 
 var Nd = 1.0
 var vmlocked = false
@@ -48,7 +49,7 @@ func _process(delta):
 		poke.transform.origin = indextip
 		var rahbasis = (xro.transform*htd.autohandright.handnode.transform).basis
 		if not elasticwire.visible:
-			bm.transform = Transform3D(rahbasis, indextip)
+			bm.transform = Transform3D(rahbasis, lerp(bm.transform.origin, indextip, brushfilter))
 		else:
 			var vecindex = indextip - thumbtip
 			if vecindex.length() < 0.05:
@@ -101,6 +102,7 @@ func letterbutton(t, pressed):
 		await RenderingServer.frame_post_draw
 		get_node("/root/Main/SubViewport/Background").visible = false
 		
+
 
 const modalletters = [ "L", "E" ]
 func _on_poke_area_entered(area):

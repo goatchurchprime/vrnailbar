@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://bjynpo22pmh6y"]
+[gd_scene load_steps=42 format=3 uid="uid://bjynpo22pmh6y"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_e1dgm"]
 [ext_resource type="PackedScene" uid="uid://ctltchlf2j2r4" path="res://addons/xr-simulator/XRSimulator.tscn" id="1_roqg7"]
@@ -68,7 +68,7 @@ size = Vector3(0.008, 0.004, 0.001)
 albedo_color = Color(1, 1, 0.0235294, 1)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_pas3g"]
-top_radius = 0.01
+top_radius = 0.004
 bottom_radius = 0.001
 height = 0.1
 
@@ -86,6 +86,15 @@ viewport_path = NodePath("SubViewport")
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_02lhs"]
 resource_local_to_scene = true
 albedo_texture = SubResource("ViewportTexture_t2emt")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_oymru"]
+top_radius = 0.01
+bottom_radius = 0.001
+height = 1.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y5nf6"]
+transparency = 1
+albedo_color = Color(0.533333, 0.443137, 0.301961, 0.592157)
 
 [sub_resource type="SphereMesh" id="SphereMesh_7pdvy"]
 radius = 0.1
@@ -167,6 +176,7 @@ mesh = SubResource("SphereMesh_vnqdd")
 surface_material_override/0 = SubResource("StandardMaterial3D_sq61f")
 
 [node name="ElasticWire" type="Node3D" parent="."]
+visible = false
 script = ExtResource("10_g2p35")
 
 [node name="Rod" type="MeshInstance3D" parent="ElasticWire"]
@@ -264,6 +274,11 @@ transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, -0.546,
 
 [node name="Label3D" parent="ViewportMesh/ButtonE" index="0"]
 text = "E"
+
+[node name="brushtip" type="MeshInstance3D" parent="ViewportMesh"]
+transform = Transform3D(1, 0, 0, 0, 0.1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_oymru")
+surface_material_override/0 = SubResource("StandardMaterial3D_y5nf6")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.317839, 1.71884, -0.779254)

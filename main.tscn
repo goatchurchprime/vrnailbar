@@ -50,7 +50,7 @@ radius = 0.005
 
 [sub_resource type="PrismMesh" id="PrismMesh_oag17"]
 left_to_right = 0.0
-size = Vector3(0.004, 0.004, 0.004)
+size = Vector3(0.006, 0.004, 0.009)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sq61f"]
 albedo_color = Color(1, 1, 0.0431373, 1)
@@ -189,7 +189,6 @@ tracker = &"left_hand"
 surface_material_override/0 = SubResource("ShaderMaterial_vq1j2")
 
 [node name="AutoHandtracker" parent="XROrigin3D/XRController3DLeft" instance=ExtResource("3_o0v7i")]
-visiblehandtrackskeleton = false
 enableautotracker = false
 
 [node name="XRController3DRight" type="XRController3D" parent="XROrigin3D"]

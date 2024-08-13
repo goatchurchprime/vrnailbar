@@ -67,9 +67,11 @@ func _process(delta):
 		var backpos = xro.transform*autohanddominant.oxrktransRaw[OpenXRInterface.HAND_JOINT_LITTLE_PROXIMAL].origin
 		var vecwristtip = (indextip - backpos).normalized()
 		var rahbasis = (autohanddominant.handnode.transform).basis
-		poke.transform = Transform3D(rahbasis, indextip)
+		var xrt = xro.global_transform
+		poke.transform = xrt*autohanddominant.oxrktransRaw[OpenXRInterface.HAND_JOINT_INDEX_TIP]
 		if not elasticwire.visible:
-			bm.handheldtransform = Transform3D(rahbasis, indextip)
+			#bm.handheldtransform = Transform3D(rahbasis, indextip)
+			bm.handheldtransform = poke.transform
 			if mqttpublish:
 				$MQTT.publish("handtrans", var_to_str(bm.handheldtransform))
 			

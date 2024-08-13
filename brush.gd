@@ -19,15 +19,20 @@ func colorcycle():
 var surfacecontact = false
 
 var nextfirstpos = false
+var alwaysfilter = true
 func _process(delta):
 	if handheldtransform != null:
-		if brushlag.visible:
+		if alwaysfilter:
+			#bfilt.BFfiltTransSet(handheldtransform)
+			transform = bfilt.BFfiltTrans(handheldtransform)
+			#transform = handheldtransform
+
+		elif brushlag.visible:
 			transform = handheldtransform 
 		else:
 			if nextfirstpos:
 				bfilt.BFfiltTransSet(handheldtransform)
 				transform = bfilt.BFfiltTrans(handheldtransform)
-				print("nextfirstpos ", transform.origin, handheldtransform.origin)
 				nextfirstpos = false
 			else:
 				transform = bfilt.BFfiltTrans(handheldtransform)
@@ -54,11 +59,19 @@ func _process(delta):
 			brushlag.transform = brushtip.transform
 			brushlag.visible = true
 		else:
-			var ry = brushlag.transform.basis.y.length()*1.5
-			var vl = brushtip.transform.origin - brushlag.transform.origin
-			var vllen = vl.length()
-			var vlam = (vllen - ry)/vllen if vllen > ry else 0
-			brushlag.transform = Transform3D(brushtip.transform.basis, brushlag.transform.origin + vl*vlam)
+			const alignmotiononly = true
+			if alignmotiononly:
+				brushlag.transform.origin
+				var vl = brushtip.transform.basis.y
+				# solve 0 = vl.dot(brushlag.transform.origin + vl*vlam - brushtip.transform.origin)
+				var vlam = -vl.dot(brushlag.transform.origin - brushtip.transform.origin)/vl.dot(vl)
+				brushlag.transform = Transform3D(brushtip.transform.basis, brushlag.transform.origin + vl*vlam)
+			else:
+				var ry = max(0.01, brushlag.transform.basis.y.length()*1.5)
+				var vl = brushtip.transform.origin - brushlag.transform.origin
+				var vllen = vl.length()
+				var vlam = (vllen - ry)/vllen if vllen > ry else 0
+				brushlag.transform = Transform3D(brushtip.transform.basis, brushlag.transform.origin + vl*vlam)
 					
 		#brushtip.transform.basis.y = bpm - lp0
 		#brushtip.transform.origin*2 = bpm + lp0

@@ -14,14 +14,23 @@ func colorcycle():
 	viewportbrush.color = viewportbrush.colorcycle[viewportbrush.icolor]
 	$BrushAngle/BrushActual/MeshInstance3D.get_surface_override_material(0).albedo_color = viewportbrush.color
 
+@onready var bfilt = ButterworthFilter.new()
+
 var surfacecontact = false
+
+var nextfirstpos = false
 func _process(delta):
 	if handheldtransform != null:
 		if brushlag.visible:
 			transform = handheldtransform 
 		else:
-			const freemovesmoothing = 0.1
-			transform = Transform3D(handheldtransform.basis, lerp(transform.origin, handheldtransform.origin, freemovesmoothing))
+			if nextfirstpos:
+				bfilt.BFfiltTransSet(handheldtransform)
+				transform = bfilt.BFfiltTrans(handheldtransform)
+				print("nextfirstpos ", transform.origin, handheldtransform.origin)
+				nextfirstpos = false
+			else:
+				transform = bfilt.BFfiltTrans(handheldtransform)
 		handheldtransform = null
 
 	var brushnose = $BrushAngle/BrushActual.global_transform.origin
@@ -57,6 +66,8 @@ func _process(delta):
 	else:
 		brushtip.visible = false
 		if bp0.z > 0.02:
-			brushlag.visible = false
+			if brushlag.visible:
+				brushlag.visible = false
+				nextfirstpos = true
 	
 	

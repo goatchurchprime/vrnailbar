@@ -13,8 +13,9 @@ func _process(delta):
 		var x = fin.get_line()
 		if x:
 			var t = str_to_var(x)
-			var fb = bfilt.BFfiltOrient(t.basis)
-			$FilteredPos.transform = Transform3D(fb, bfilt.BFfiltVec(t.origin) + relvec)
+			#bfilt.BFfiltTransSet(t)
+			var ft = bfilt.BFfiltTrans(t)
+			$FilteredPos.transform = Transform3D(ft.basis, ft.origin + relvec)
 			$UnfilteredPos.transform = Transform3D(t.basis, t.origin + relvecU)
 		else:
 			fin.close()

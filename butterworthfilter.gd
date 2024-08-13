@@ -75,3 +75,17 @@ func BFfiltOrient(b):
 	var fqv = Vector3(BFqx.addfiltvalue(q.x), BFqy.addfiltvalue(q.y), BFqz.addfiltvalue(q.z))
 	var fw = sqrt(clamp(1.0 - fqv.length_squared(), 0.0, 1.0))
 	return Basis(Quaternion(fqv.x, fqv.y, fqv.z, fw))
+
+func BFfiltTrans(t):
+	return Transform3D(BFfiltOrient(t.basis), BFfiltVec(t.origin))
+
+func BFfiltTransSet(t):
+	var v = t.origin
+	BFtx.firstval(v.x)
+	BFty.firstval(v.y)
+	BFtz.firstval(v.z)
+	var q = t.basis.get_rotation_quaternion()
+	BFqx.firstval(q.x)
+	BFqy.firstval(q.y)
+	BFqz.firstval(q.z)
+	

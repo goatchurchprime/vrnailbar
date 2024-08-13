@@ -10,10 +10,16 @@ extends Node
 @onready var elasticwire = get_node("/root/Main/ElasticWire")
 var leftie = true
 
+var brokerurl = null # "mosquitto.doesliverpool.xyz"
+var mqttpublish = false
+
 func _ready():
 	if leftie:
 		var ba = bm.get_node("BrushAngle")
 		ba.rotation_degrees = Vector3(-25, -50, 0)
+
+	if brokerurl:
+		$MQTT.connect_to_broker(brokerurl)
 
 var Nd = 1.0
 var vmlocked = false
@@ -64,6 +70,9 @@ func _process(delta):
 		poke.transform = Transform3D(rahbasis, indextip)
 		if not elasticwire.visible:
 			bm.handheldtransform = Transform3D(rahbasis, indextip)
+			if mqttpublish:
+				$MQTT.publish("handtrans", var_to_str(bm.handheldtransform))
+			
 		else:
 			var vecindex = indextip - thumbtip
 			if vecindex.length() < 0.05:
@@ -77,6 +86,8 @@ func _process(delta):
 		poke.transform.origin = bmtransform.origin + bmtransform.basis.z*(0.05)
 		if not elasticwire.visible:
 			bm.handheldtransform = bmtransform
+			if mqttpublish:
+				$MQTT.publish("handtrans", var_to_str(bm.handheldtransform))
 		else:
 			elasticwire.endpluspos = bmtransform.origin
 			elasticwire.endplusbasis = bmtransform.basis
@@ -134,3 +145,12 @@ func _on_poke_area_exited(area):
 	var lab = area.get_node_or_null("Label3D")
 	if lab != null and not(lab.text in modalletters):
 		lab.modulate = Color.WHITE
+
+
+func _on_mqtt_broker_connected():
+	print("broker connected")
+	$MQTT.publish("handtrans", "connected")
+	mqttpublish = true
+
+func _on_mqtt_broker_connection_failed():
+	print("broker failed")

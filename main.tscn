@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=3 uid="uid://bjynpo22pmh6y"]
+[gd_scene load_steps=50 format=3 uid="uid://bjynpo22pmh6y"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_e1dgm"]
 [ext_resource type="PackedScene" uid="uid://ctltchlf2j2r4" path="res://addons/xr-simulator/XRSimulator.tscn" id="1_roqg7"]
@@ -7,12 +7,14 @@
 [ext_resource type="PackedScene" uid="uid://d20xy80xd171g" path="res://addons/xr-autohandtracker/OpenXRHandData.tscn" id="2_1pg5r"]
 [ext_resource type="Script" path="res://object_positions_from_hands.gd" id="3_6d7kk"]
 [ext_resource type="PackedScene" uid="uid://bufelcry36rw1" path="res://addons/xr-autohandtracker/auto_handtracker.tscn" id="3_o0v7i"]
+[ext_resource type="PackedScene" uid="uid://ktm7k0co2o7l" path="res://addons/mqtt/mqtt.tscn" id="4_4fy4b"]
 [ext_resource type="Script" path="res://brushpaint.gd" id="5_2bqh8"]
 [ext_resource type="PackedScene" uid="uid://domji4c2dw41d" path="res://Hand_low_R.gltf" id="5_jp066"]
 [ext_resource type="Script" path="res://node_2d.gd" id="6_e7eym"]
 [ext_resource type="Shader" path="res://handmaterial.gdshader" id="7_7k8ps"]
 [ext_resource type="PackedScene" uid="uid://cewwyhvr0we3y" path="res://letterbutton.tscn" id="9_66mbh"]
 [ext_resource type="Script" path="res://elasticwire.gd" id="10_g2p35"]
+[ext_resource type="Script" path="res://butterworth_filter_test.gd" id="15_2353k"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dv100"]
 
@@ -145,6 +147,13 @@ noise = SubResource("FastNoiseLite_q5230")
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.990278, 1), 0.0, 0.0, 0, 0]
 point_count = 2
 
+[sub_resource type="PrismMesh" id="PrismMesh_gbthe"]
+left_to_right = 0.0
+size = Vector3(0.04, 0.04, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rxcsn"]
+albedo_color = Color(0, 0.787385, 0.787479, 1)
+
 [node name="Main" type="Node3D"]
 script = ExtResource("1_e1dgm")
 
@@ -157,6 +166,8 @@ environment = SubResource("Environment_irs82")
 
 [node name="ObjectPositionsFromHands" type="Node" parent="XROrigin3D/OpenXRHandData"]
 script = ExtResource("3_6d7kk")
+
+[node name="MQTT" parent="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands" instance=ExtResource("4_4fy4b")]
 
 [node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
 transform = Transform3D(0.980025, 0, 0.198872, 0, 1, 0, -0.198872, 0, 0.980025, 0, 0.802956, 0)
@@ -376,6 +387,13 @@ script = ExtResource("5_2bqh8")
 [node name="SpawnCamera" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.907734, -0.242984)
 
+[node name="ButterworthFilterTest" type="MeshInstance3D" parent="."]
+mesh = SubResource("PrismMesh_gbthe")
+surface_material_override/0 = SubResource("StandardMaterial3D_rxcsn")
+script = ExtResource("15_2353k")
+
+[connection signal="broker_connected" from="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands/MQTT" to="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands" method="_on_mqtt_broker_connected"]
+[connection signal="broker_connection_failed" from="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands/MQTT" to="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands" method="_on_mqtt_broker_connection_failed"]
 [connection signal="area_entered" from="Poke" to="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands" method="_on_poke_area_entered"]
 [connection signal="area_exited" from="Poke" to="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands" method="_on_poke_area_exited"]
 

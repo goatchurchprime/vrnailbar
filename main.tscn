@@ -1,4 +1,4 @@
-[gd_scene load_steps=50 format=3 uid="uid://bjynpo22pmh6y"]
+[gd_scene load_steps=52 format=3 uid="uid://bjynpo22pmh6y"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_e1dgm"]
 [ext_resource type="PackedScene" uid="uid://ctltchlf2j2r4" path="res://addons/xr-simulator/XRSimulator.tscn" id="1_roqg7"]
@@ -151,8 +151,15 @@ point_count = 2
 left_to_right = 0.0
 size = Vector3(0.04, 0.04, 0.04)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rxcsn"]
-albedo_color = Color(0, 0.787385, 0.787479, 1)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xu2gc"]
+albedo_color = Color(1.54018e-06, 0.797889, 0.799808, 1)
+
+[sub_resource type="PrismMesh" id="PrismMesh_hetu6"]
+left_to_right = 0.0
+size = Vector3(0.004, 0.004, 0.004)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g1xrn"]
+albedo_color = Color(0.835294, 0.713726, 0.27451, 1)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_e1dgm")
@@ -387,10 +394,16 @@ script = ExtResource("5_2bqh8")
 [node name="SpawnCamera" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.907734, -0.242984)
 
-[node name="ButterworthFilterTest" type="MeshInstance3D" parent="."]
-mesh = SubResource("PrismMesh_gbthe")
-surface_material_override/0 = SubResource("StandardMaterial3D_rxcsn")
+[node name="ButterworthFilterTest" type="Node3D" parent="."]
 script = ExtResource("15_2353k")
+
+[node name="FilteredPos" type="MeshInstance3D" parent="ButterworthFilterTest"]
+mesh = SubResource("PrismMesh_gbthe")
+surface_material_override/0 = SubResource("StandardMaterial3D_xu2gc")
+
+[node name="UnfilteredPos" type="MeshInstance3D" parent="ButterworthFilterTest"]
+mesh = SubResource("PrismMesh_hetu6")
+surface_material_override/0 = SubResource("StandardMaterial3D_g1xrn")
 
 [connection signal="broker_connected" from="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands/MQTT" to="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands" method="_on_mqtt_broker_connected"]
 [connection signal="broker_connection_failed" from="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands/MQTT" to="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands" method="_on_mqtt_broker_connection_failed"]

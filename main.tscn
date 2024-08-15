@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=3 uid="uid://bjynpo22pmh6y"]
+[gd_scene load_steps=45 format=3 uid="uid://bjynpo22pmh6y"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_e1dgm"]
 [ext_resource type="PackedScene" uid="uid://ctltchlf2j2r4" path="res://addons/xr-simulator/XRSimulator.tscn" id="1_roqg7"]
@@ -13,7 +13,6 @@
 [ext_resource type="Script" path="res://node_2d.gd" id="6_e7eym"]
 [ext_resource type="Shader" path="res://handmaterial.gdshader" id="7_7k8ps"]
 [ext_resource type="PackedScene" uid="uid://cewwyhvr0we3y" path="res://letterbutton.tscn" id="9_66mbh"]
-[ext_resource type="Script" path="res://elasticwire.gd" id="10_g2p35"]
 [ext_resource type="Script" path="res://butterworth_filter_test.gd" id="15_2353k"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dv100"]
@@ -55,27 +54,6 @@ size = Vector3(0.006, 0.004, 0.009)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sq61f"]
 albedo_color = Color(1, 1, 0.0431373, 1)
 
-[sub_resource type="BoxMesh" id="BoxMesh_kl0p8"]
-size = Vector3(0.002, 0.002, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rtkbx"]
-albedo_color = Color(0.0470588, 1, 1, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_8i7a8"]
-size = Vector3(0.001, 0.001, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lr6y6"]
-render_priority = 6
-depth_draw_mode = 1
-no_depth_test = true
-albedo_color = Color(0.323089, 0.433695, 0.748747, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_hayjf"]
-size = Vector3(0.008, 0.004, 0.001)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tnbpm"]
-albedo_color = Color(1, 1, 0.0235294, 1)
-
 [sub_resource type="CylinderMesh" id="CylinderMesh_pas3g"]
 top_radius = 0.004
 bottom_radius = 0.001
@@ -105,7 +83,7 @@ rings = 0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y5nf6"]
 transparency = 1
-albedo_color = Color(0.533333, 0.443137, 0.301961, 0.592157)
+albedo_color = Color(0.32549, 0.733333, 0.709804, 0.592157)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_0rjes"]
 top_radius = 0.01
@@ -221,27 +199,8 @@ shape = SubResource("SphereShape3D_gyay1")
 mesh = SubResource("PrismMesh_oag17")
 surface_material_override/0 = SubResource("StandardMaterial3D_sq61f")
 
-[node name="ElasticWire" type="Node3D" parent="."]
-visible = false
-script = ExtResource("10_g2p35")
-
-[node name="Rod" type="MeshInstance3D" parent="ElasticWire"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 0.1, 0, 0.902078, 0)
-mesh = SubResource("BoxMesh_kl0p8")
-surface_material_override/0 = SubResource("StandardMaterial3D_rtkbx")
-
-[node name="InnerRod" type="MeshInstance3D" parent="ElasticWire/Rod"]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 1, 0, 0, 0)
-mesh = SubResource("BoxMesh_8i7a8")
-surface_material_override/0 = SubResource("StandardMaterial3D_lr6y6")
-
-[node name="Marker" type="MeshInstance3D" parent="ElasticWire/Rod"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.2)
-mesh = SubResource("BoxMesh_hayjf")
-surface_material_override/0 = SubResource("StandardMaterial3D_tnbpm")
-
 [node name="Brush" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.174373, 0.816067, -0.265924)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.174373, 0.816067, -0.496304)
 script = ExtResource("2_0h3nx")
 
 [node name="BrushAngle" type="Node3D" parent="Brush"]
@@ -341,6 +300,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_x4m5v")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.317839, 1.71884, -0.779254)
 shadow_enabled = true
 shadow_bias = 0.02
+shadow_blur = 0.0
 
 [node name="RedCone" type="MeshInstance3D" parent="OmniLight3D"]
 mesh = SubResource("SphereMesh_7pdvy")

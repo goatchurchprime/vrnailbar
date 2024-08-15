@@ -7,6 +7,8 @@ extends Node3D
 @onready var brushtip = get_node("/root/Main/ViewportMesh/brushtip")
 @onready var brushlag = get_node("/root/Main/ViewportMesh/brushlag")
 
+var bendybrush = true
+var bendybrushlocallength = 0.1
 var handheldtransform = null
 
 func colorcycle():
@@ -17,6 +19,7 @@ func colorcycle():
 @onready var bfilt = ButterworthFilter.new()
 
 var surfacecontact = false
+# brushtip visible means surface contact
 
 var nextfirstpos = false
 var alwaysfilter = true
@@ -38,12 +41,40 @@ func _process(delta):
 				transform = bfilt.BFfiltTrans(handheldtransform)
 		handheldtransform = null
 
+
 	var brushnose = $BrushAngle/BrushActual.global_transform.origin
 	var brushtail = $BrushAngle/BrushActual.global_transform.origin + $BrushAngle/BrushActual.global_transform.basis.z*0.1
 	var planeinv = paintplane.global_transform.affine_inverse()
-	
 	var bp0 = planeinv*brushnose
 	var bp1 = planeinv*brushtail
+
+	if bendybrush:
+		bendybrushimplementation(bp0, bp1)
+	else:
+		pokeybrushimplementation(bp0, bp1)
+		
+func bendybrushimplementation(bp0, bp1):
+	#pokeybrushimplementation(bp0, bp1)
+	var bpB = paintplane.global_transform.affine_inverse().basis*$BrushAngle/BrushActual.global_transform.basis
+	var bpZN = bpB.z.normalized()
+	var bpbt = bp0 - bpZN*bendybrushlocallength
+	if bpbt.z < 0 and bp0.z > 0:
+		var hdist = sqrt(max(0.0, bendybrushlocallength*bendybrushlocallength - bp0.z*bp0.z))
+		var bpBA = Vector3(bpZN.x, bpZN.y, 0.0).normalized()
+		var bpcontact = Vector3(bp0.x, bp0.y, 0.0) - bpBA*hdist
+		var bpBZ = bp0 - bpcontact 
+		var bpBX = Vector3(bpBA.y, -bpBA.x, 0.0)
+		assert (is_zero_approx(bpBX.dot(bpBZ)))
+		assert (is_equal_approx(bpBZ.length(), bendybrushlocallength))
+		var bpBY = (bpBZ/bendybrushlocallength).cross(bpBX)
+		brushtip.transform = Transform3D(Basis(bpBY, bpBZ, bpBX), (bp0 + bpcontact)*0.5)
+		var spotdiam = 	0.005
+		viewportbrush.brushpos(bpcontact - bpBA*spotdiam, bpcontact + bpBA*spotdiam, Vector2(spotdiam*20,0))
+
+	else:
+		brushtip.transform = Transform3D(Basis(bpB.y.normalized(), bpZN*bendybrushlocallength, bpB.x.normalized()), bp0 - bpZN*(bendybrushlocallength*0.5))
+
+func pokeybrushimplementation(bp0, bp1):
 	if bp0.z < 0 and bp1.z > 0:
 		var lam = inverse_lerp(bp0.z, bp1.z, 0.0)
 		var lp0 = Vector2(bp0.x, bp0.y)
@@ -61,7 +92,6 @@ func _process(delta):
 		else:
 			const alignmotiononly = true
 			if alignmotiononly:
-				brushlag.transform.origin
 				var vl = brushtip.transform.basis.y
 				# solve 0 = vl.dot(brushlag.transform.origin + vl*vlam - brushtip.transform.origin)
 				var vlam = -vl.dot(brushlag.transform.origin - brushtip.transform.origin)/vl.dot(vl)

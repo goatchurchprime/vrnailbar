@@ -7,7 +7,7 @@ extends Node
 @onready var vm = get_node("/root/Main/ViewportMesh")
 @onready var bm = get_node("/root/Main/Brush")
 @onready var poke = get_node("/root/Main/Poke")
-@onready var elasticwire = get_node("/root/Main/ElasticWire")
+
 var leftie = true
 
 var brokerurl = null # "mosquitto.doesliverpool.xyz"
@@ -34,32 +34,25 @@ func _process(delta):
 			var indextip = xro.transform*autohandsecondary.oxrktransRaw[OpenXRInterface.HAND_JOINT_INDEX_TIP].origin
 			var middletip = xro.transform*autohandsecondary.oxrktransRaw[OpenXRInterface.HAND_JOINT_MIDDLE_TIP].origin
 			var vecindex = (indextip - thumbtip)
-			if not vmlocked:
-				var midtip = (thumbtip + indextip + middletip)/3.0
-				var vecmiddle = (middletip - thumbtip)
-				var bx = vecindex.normalized()
-				if leftie:
-					var bz = -vecindex.cross(vecmiddle).normalized()
-					var by = bz.cross(bx)
-					vm.transform = Transform3D(Basis(bx, -by, bz)*(-0.2), midtip)
-				else:
-					var bz = vecindex.cross(vecmiddle).normalized()
-					var by = bz.cross(bx)
-					vm.transform = Transform3D(Basis(bx, -by, -bz)*(0.2), midtip)
+			var midtip = (thumbtip + indextip + middletip)/3.0
+			var vecmiddle = (middletip - thumbtip)
+			var bx = vecindex.normalized()
+			if leftie:
+				var bz = -vecindex.cross(vecmiddle).normalized()
+				var by = bz.cross(bx)
+				vm.transform = Transform3D(Basis(bx, -by, bz)*(-0.2), midtip)
+			else:
+				var bz = vecindex.cross(vecmiddle).normalized()
+				var by = bz.cross(bx)
+				vm.transform = Transform3D(Basis(bx, -by, -bz)*(0.2), midtip)
 					
-			elif vecindex.length() < 0.05:
-				elasticwire.endminuspos = (indextip + thumbtip)*0.5
-
 	else:
 		var pose = autohandsecondary.xr_controllertracker.get_pose("aim") if autohandsecondary.xr_controllertracker != null else null
 		var vmtransform = xro.transform*pose.transform if pose != null else autohandsecondary.xr_controller_node.global_transform
 		vmtransform.origin += vmtransform.basis.z*0.1
 		vmtransform.basis = vmtransform.basis.rotated(Vector3(1,0,0), deg_to_rad(-45))
 		vmtransform.basis = vmtransform.basis.scaled(Vector3(0.25,0.25,0.25))
-		if not vmlocked:
-			vm.transform = vmtransform
-		else:
-			elasticwire.endminuspos = vmtransform.origin
+		vm.transform = vmtransform
 		
 	if autohanddominant and autohanddominant.handtrackingactive and autohanddominant.handtrackingsource != autohanddominant.HAND_TRACKED_SOURCE_CONTROLLER:
 		var indextip = xro.transform*autohanddominant.oxrktransRaw[OpenXRInterface.HAND_JOINT_INDEX_TIP].origin
@@ -69,44 +62,30 @@ func _process(delta):
 		var rahbasis = (autohanddominant.handnode.transform).basis
 		var xrt = xro.global_transform
 		poke.transform = xrt*autohanddominant.oxrktransRaw[OpenXRInterface.HAND_JOINT_INDEX_TIP]
-		if not elasticwire.visible:
-			#bm.handheldtransform = Transform3D(rahbasis, indextip)
-			bm.handheldtransform = poke.transform
-			if mqttpublish:
-				$MQTT.publish("handtrans", var_to_str(bm.handheldtransform))
+
+		#bm.handheldtransform = Transform3D(rahbasis, indextip)
+		bm.handheldtransform = poke.transform
+		if mqttpublish:
+			$MQTT.publish("handtrans", var_to_str(bm.handheldtransform))
 			
-		else:
-			var vecindex = indextip - thumbtip
-			if vecindex.length() < 0.05:
-				elasticwire.endpluspos = (indextip + thumbtip)*0.5
-				elasticwire.endplusbasis = rahbasis
 				
 	else:
 		var pose = autohanddominant.xr_controllertracker.get_pose("aim") if autohanddominant.xr_controllertracker != null else null
 		var bmtransform = xro.transform*pose.transform if pose != null else autohanddominant.xr_controller_node.global_transform
 		bmtransform.origin += bmtransform.basis.z*(-0.2)
 		poke.transform.origin = bmtransform.origin + bmtransform.basis.z*(0.05)
-		if not elasticwire.visible:
-			bm.handheldtransform = bmtransform
-			if mqttpublish:
-				$MQTT.publish("handtrans", var_to_str(bm.handheldtransform))
-		else:
-			elasticwire.endpluspos = bmtransform.origin
-			elasticwire.endplusbasis = bmtransform.basis
+
+		bm.handheldtransform = bmtransform
+		if mqttpublish:
+			$MQTT.publish("handtrans", var_to_str(bm.handheldtransform))
 			
 
 func letterbutton(t, pressed):
 	var ba = bm.get_node("BrushAngle")
 	if t == "G":
-		if not elasticwire.visible:
-			ba.rotation_degrees.x += 5
-		else:
-			elasticwire.get_nodeleftie("Rod/Marker").position.z -= 0.05
+		ba.rotation_degrees.x += 5
 	if t == "H":
-		if not elasticwire.visible:
-			ba.rotation_degrees.x -= 5
-		else:
-			elasticwire.get_node("Rod/Marker").position.z += 0.05
+		ba.rotation_degrees.x -= 5
 	if t == "C":
 		ba.rotation_degrees.y += 5
 	if t == "D":
@@ -115,13 +94,19 @@ func letterbutton(t, pressed):
 	if t == "L":
 		vmlocked = pressed
 	if t == "I":
-		ba.get_node("BrushActual").transform.origin.z -= 0.01
+		if bm.bendybrush:
+			bm.bendybrushlocallength -= 0.01
+		else:
+			ba.get_node("BrushActual").transform.origin.z -= 0.01
 	if t == "O":
-		ba.get_node("BrushActual").transform.origin.z += 0.01
+		if bm.bendybrush:
+			bm.bendybrushlocallength += 0.01
+		else:
+			ba.get_node("BrushActual").transform.origin.z += 0.01
 	if t == "P":
 		bm.colorcycle()
 	if t == "E":
-		elasticwire.visible = pressed
+		bm.bendybrush = not pressed
 	if t == "R":
 		leftie = not pressed
 
@@ -131,8 +116,6 @@ func letterbutton(t, pressed):
 		get_node("/root/Main/SubViewport").render_target_update_mode = SubViewport.UPDATE_ONCE
 		await RenderingServer.frame_post_draw
 		get_node("/root/Main/SubViewport/Background").visible = false
-		
-
 
 const modalletters = [ "L", "E", "R" ]
 func _on_poke_area_entered(area):

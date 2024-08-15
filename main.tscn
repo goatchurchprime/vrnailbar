@@ -189,6 +189,7 @@ tracker = &"left_hand"
 surface_material_override/0 = SubResource("ShaderMaterial_vq1j2")
 
 [node name="AutoHandtracker" parent="XROrigin3D/XRController3DLeft" instance=ExtResource("3_o0v7i")]
+visiblehandtrackskeleton = false
 enableautotracker = false
 
 [node name="XRController3DRight" type="XRController3D" parent="XROrigin3D"]

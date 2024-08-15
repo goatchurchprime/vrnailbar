@@ -3,25 +3,19 @@ extends Node2D
 var colorcycle = [ Color.RED, Color.CYAN, Color.DARK_BLUE, Color.WHITE_SMOKE, Color.LAWN_GREEN ]
 var icolor = 0
 
-var width = 0.0
+@onready var sz = Vector2(get_parent().size.x, -get_parent().size.y)
+
 var color = Color.RED
 var p0 = Vector2()
-var p1 = Vector2()
-var sz = Vector2()
+var pm = Vector2()
+var pv = Vector2()
 
-func _ready():
-	sz = Vector2(get_parent().size.x, -get_parent().size.y)
-
-func brushpos(bp0, bp1):
-	if bp0.z < 0 and bp1.z > 0:
-		var lam = inverse_lerp(bp0.z, bp1.z, 0.0)
-		var bpm = lerp(Vector2(bp0.x, bp0.y), Vector2(bp1.x, bp1.y), lam)
-		#prints(lam)
-		p0 = Vector2(bp0.x, bp0.y)*sz
-		p1 = Vector2(bpm.x, bpm.y)*sz
-		width = (Vector2(bp1.x, bp1.y) - Vector2(bp0.x, bp0.y)).length()*sz.x*0.025
-		queue_redraw()
-		get_parent().render_target_update_mode = SubViewport.UPDATE_ONCE
+func brushpos(lp0, lpm, lpv):
+	p0 = Vector2(lp0.x, lp0.y)
+	pm = Vector2(lpm.x, lpm.y)
+	pv = lpv
+	queue_redraw()
+	get_parent().render_target_update_mode = SubViewport.UPDATE_ONCE
 
 func _draw():
-	draw_line(p0, p1, color, width, true)
+	draw_line(p0*sz, pm*sz, color, pv.length()*sz.x*0.025, true)

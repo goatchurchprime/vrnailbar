@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://bjynpo22pmh6y"]
+[gd_scene load_steps=52 format=3 uid="uid://bjynpo22pmh6y"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_e1dgm"]
 [ext_resource type="PackedScene" uid="uid://ctltchlf2j2r4" path="res://addons/xr-simulator/XRSimulator.tscn" id="1_roqg7"]
@@ -7,12 +7,14 @@
 [ext_resource type="PackedScene" uid="uid://d20xy80xd171g" path="res://addons/xr-autohandtracker/OpenXRHandData.tscn" id="2_1pg5r"]
 [ext_resource type="Script" path="res://object_positions_from_hands.gd" id="3_6d7kk"]
 [ext_resource type="PackedScene" uid="uid://bufelcry36rw1" path="res://addons/xr-autohandtracker/auto_handtracker.tscn" id="3_o0v7i"]
+[ext_resource type="PackedScene" uid="uid://ktm7k0co2o7l" path="res://addons/mqtt/mqtt.tscn" id="4_4fy4b"]
 [ext_resource type="Script" path="res://brushpaint.gd" id="5_2bqh8"]
 [ext_resource type="PackedScene" uid="uid://domji4c2dw41d" path="res://Hand_low_R.gltf" id="5_jp066"]
 [ext_resource type="Script" path="res://node_2d.gd" id="6_e7eym"]
 [ext_resource type="Shader" path="res://handmaterial.gdshader" id="7_7k8ps"]
 [ext_resource type="PackedScene" uid="uid://cewwyhvr0we3y" path="res://letterbutton.tscn" id="9_66mbh"]
 [ext_resource type="Script" path="res://elasticwire.gd" id="10_g2p35"]
+[ext_resource type="Script" path="res://butterworth_filter_test.gd" id="15_2353k"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_dv100"]
 
@@ -36,12 +38,19 @@ shader_parameter/orbrad = 0.0
 shader_parameter/orbbrightcolour = Color(1, 0, 0, 0.9)
 shader_parameter/orbdropoff = 0.03
 
+[sub_resource type="PrismMesh" id="PrismMesh_ur76b"]
+left_to_right = 0.0
+size = Vector3(0.02, 0.02, 0.02)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8mqa1"]
+albedo_color = Color(0.820899, 0.424239, 0.124721, 1)
+
 [sub_resource type="SphereShape3D" id="SphereShape3D_gyay1"]
 radius = 0.005
 
-[sub_resource type="SphereMesh" id="SphereMesh_vnqdd"]
-radius = 0.002
-height = 0.004
+[sub_resource type="PrismMesh" id="PrismMesh_oag17"]
+left_to_right = 0.0
+size = Vector3(0.006, 0.004, 0.009)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sq61f"]
 albedo_color = Color(1, 1, 0.0431373, 1)
@@ -68,7 +77,7 @@ size = Vector3(0.008, 0.004, 0.001)
 albedo_color = Color(1, 1, 0.0235294, 1)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_pas3g"]
-top_radius = 0.01
+top_radius = 0.004
 bottom_radius = 0.001
 height = 0.1
 
@@ -86,6 +95,28 @@ viewport_path = NodePath("SubViewport")
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_02lhs"]
 resource_local_to_scene = true
 albedo_texture = SubResource("ViewportTexture_t2emt")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_oymru"]
+top_radius = 0.01
+bottom_radius = 0.001
+height = 1.0
+radial_segments = 8
+rings = 0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y5nf6"]
+transparency = 1
+albedo_color = Color(0.533333, 0.443137, 0.301961, 0.592157)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_0rjes"]
+top_radius = 0.01
+bottom_radius = 0.001
+height = 1.0
+radial_segments = 8
+rings = 0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_x4m5v"]
+transparency = 1
+albedo_color = Color(0.24783, 0.526489, 0.336244, 0.592157)
 
 [sub_resource type="SphereMesh" id="SphereMesh_7pdvy"]
 radius = 0.1
@@ -116,6 +147,20 @@ noise = SubResource("FastNoiseLite_q5230")
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.990278, 1), 0.0, 0.0, 0, 0]
 point_count = 2
 
+[sub_resource type="PrismMesh" id="PrismMesh_gbthe"]
+left_to_right = 0.0
+size = Vector3(0.04, 0.04, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xu2gc"]
+albedo_color = Color(1.54018e-06, 0.797889, 0.799808, 1)
+
+[sub_resource type="PrismMesh" id="PrismMesh_hetu6"]
+left_to_right = 0.0
+size = Vector3(0.004, 0.004, 0.004)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g1xrn"]
+albedo_color = Color(0.835294, 0.713726, 0.27451, 1)
+
 [node name="Main" type="Node3D"]
 script = ExtResource("1_e1dgm")
 
@@ -129,6 +174,8 @@ environment = SubResource("Environment_irs82")
 [node name="ObjectPositionsFromHands" type="Node" parent="XROrigin3D/OpenXRHandData"]
 script = ExtResource("3_6d7kk")
 
+[node name="MQTT" parent="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands" instance=ExtResource("4_4fy4b")]
+
 [node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
 transform = Transform3D(0.980025, 0, 0.198872, 0, 1, 0, -0.198872, 0, 0.980025, 0, 0.802956, 0)
 
@@ -138,7 +185,11 @@ tracker = &"left_hand"
 
 [node name="Hand_low_L" parent="XROrigin3D/XRController3DLeft" instance=ExtResource("2_1cyse")]
 
+[node name="mesh_Hand_low_L" parent="XROrigin3D/XRController3DLeft/Hand_low_L/Armature/Skeleton3D" index="0"]
+surface_material_override/0 = SubResource("ShaderMaterial_vq1j2")
+
 [node name="AutoHandtracker" parent="XROrigin3D/XRController3DLeft" instance=ExtResource("3_o0v7i")]
+visiblehandtrackskeleton = false
 enableautotracker = false
 
 [node name="XRController3DRight" type="XRController3D" parent="XROrigin3D"]
@@ -149,6 +200,10 @@ tracker = &"right_hand"
 
 [node name="mesh_Hand_low_R" parent="XROrigin3D/XRController3DRight/Hand_low_R/Armature/Skeleton3D" index="0"]
 surface_material_override/0 = SubResource("ShaderMaterial_vq1j2")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="XROrigin3D/XRController3DRight/Hand_low_R"]
+mesh = SubResource("PrismMesh_ur76b")
+surface_material_override/0 = SubResource("StandardMaterial3D_8mqa1")
 
 [node name="AutoHandtracker" parent="XROrigin3D/XRController3DRight" instance=ExtResource("3_o0v7i")]
 visiblehandtrackskeleton = false
@@ -163,10 +218,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.694456, -0.100059)
 shape = SubResource("SphereShape3D_gyay1")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Poke"]
-mesh = SubResource("SphereMesh_vnqdd")
+mesh = SubResource("PrismMesh_oag17")
 surface_material_override/0 = SubResource("StandardMaterial3D_sq61f")
 
 [node name="ElasticWire" type="Node3D" parent="."]
+visible = false
 script = ExtResource("10_g2p35")
 
 [node name="Rod" type="MeshInstance3D" parent="ElasticWire"]
@@ -189,7 +245,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.174373, 0.816067, -0.265924
 script = ExtResource("2_0h3nx")
 
 [node name="BrushAngle" type="Node3D" parent="Brush"]
-transform = Transform3D(-0.173648, -0.416198, 0.892539, 0, 0.906308, 0.422618, -0.984808, 0.0733869, -0.157379, 0, 0, 0)
 
 [node name="BrushActual" type="Node3D" parent="Brush/BrushAngle"]
 
@@ -247,6 +302,12 @@ transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, -0.5711
 [node name="Label3D" parent="ViewportMesh/ButtonL" index="0"]
 text = "L"
 
+[node name="ButtonR" parent="ViewportMesh" instance=ExtResource("9_66mbh")]
+transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, 0.590032, 0.218948, 0.0390518)
+
+[node name="Label3D" parent="ViewportMesh/ButtonR" index="0"]
+text = "R"
+
 [node name="ButtonP" parent="ViewportMesh" instance=ExtResource("9_66mbh")]
 transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, -0.567008, -0.413258, 0.00225759)
 
@@ -264,6 +325,17 @@ transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, -0.546,
 
 [node name="Label3D" parent="ViewportMesh/ButtonE" index="0"]
 text = "E"
+
+[node name="brushtip" type="MeshInstance3D" parent="ViewportMesh"]
+transform = Transform3D(1, 0, 0, 0, 0.1, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CylinderMesh_oymru")
+surface_material_override/0 = SubResource("StandardMaterial3D_y5nf6")
+
+[node name="brushlag" type="MeshInstance3D" parent="ViewportMesh"]
+transform = Transform3D(1, 0, 0, 0, 0.1, 0, 0, 0, 1, 0, 0, 0)
+visible = false
+mesh = SubResource("CylinderMesh_0rjes")
+surface_material_override/0 = SubResource("StandardMaterial3D_x4m5v")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.317839, 1.71884, -0.779254)
@@ -322,9 +394,23 @@ script = ExtResource("5_2bqh8")
 [node name="SpawnCamera" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.907734, -0.242984)
 
+[node name="ButterworthFilterTest" type="Node3D" parent="."]
+script = ExtResource("15_2353k")
+
+[node name="FilteredPos" type="MeshInstance3D" parent="ButterworthFilterTest"]
+mesh = SubResource("PrismMesh_gbthe")
+surface_material_override/0 = SubResource("StandardMaterial3D_xu2gc")
+
+[node name="UnfilteredPos" type="MeshInstance3D" parent="ButterworthFilterTest"]
+mesh = SubResource("PrismMesh_hetu6")
+surface_material_override/0 = SubResource("StandardMaterial3D_g1xrn")
+
+[connection signal="broker_connected" from="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands/MQTT" to="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands" method="_on_mqtt_broker_connected"]
+[connection signal="broker_connection_failed" from="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands/MQTT" to="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands" method="_on_mqtt_broker_connection_failed"]
 [connection signal="area_entered" from="Poke" to="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands" method="_on_poke_area_entered"]
 [connection signal="area_exited" from="Poke" to="XROrigin3D/OpenXRHandData/ObjectPositionsFromHands" method="_on_poke_area_exited"]
 
+[editable path="XROrigin3D/XRController3DLeft/Hand_low_L"]
 [editable path="XROrigin3D/XRController3DRight/Hand_low_R"]
 [editable path="ViewportMesh/ButtonG"]
 [editable path="ViewportMesh/ButtonH"]
@@ -333,6 +419,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.907734, -0.242984)
 [editable path="ViewportMesh/ButtonC"]
 [editable path="ViewportMesh/ButtonD"]
 [editable path="ViewportMesh/ButtonL"]
+[editable path="ViewportMesh/ButtonR"]
 [editable path="ViewportMesh/ButtonP"]
 [editable path="ViewportMesh/ButtonZ"]
 [editable path="ViewportMesh/ButtonE"]

@@ -34,7 +34,7 @@ func _input(event):
 			$SubViewport/Line2D.position += Vector2(10, 5)
 			$SubViewport/Node2D.position += Vector2(10, 5)
 			$SubViewport/Node2D.rotation_degrees += -10
-			$SubViewport/Node2D.width *= 0.9
+			$SubViewpeort/Node2D.width *= 0.9
 			$SubViewport/Node2D.queue_redraw()
 			$SubViewport/Polygon2D2.position += Vector2(-10, 9)
 			$SubViewport.render_target_update_mode = SubViewport.UPDATE_ONCE

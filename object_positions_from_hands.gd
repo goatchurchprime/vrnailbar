@@ -27,7 +27,9 @@ func _process(delta):
 	var autohanddominant = htd.autohandleft if leftie else htd.autohandright
 	var autohandsecondary = htd.autohandright if leftie else htd.autohandleft
 	
-	if autohandsecondary and autohandsecondary.handtrackingactive:
+	if vmlocked:
+		pass
+	elif autohandsecondary and autohandsecondary.handtrackingactive:
 		var wristringdistance = (autohandsecondary.oxrktransRaw[OpenXRInterface.HAND_JOINT_RING_TIP].origin - autohandsecondary.oxrktransRaw[OpenXRInterface.HAND_JOINT_WRIST].origin).length()
 		if wristringdistance < 0.1:
 			var thumbtip = xro.transform*autohandsecondary.oxrktransRaw[OpenXRInterface.HAND_JOINT_THUMB_TIP].origin

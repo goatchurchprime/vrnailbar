@@ -5,6 +5,7 @@ extends Node3D
 @onready var viewportbrush = get_node("/root/Main/SubViewport/BrushPaint")
 
 @onready var brushtip = get_node("/root/Main/ViewportMesh/brushtip")
+@onready var brushcontact = get_node("/root/Main/ViewportMesh/brushcontact")
 @onready var brushlag = get_node("/root/Main/ViewportMesh/brushlag")
 
 var bendybrush = true
@@ -18,7 +19,6 @@ func colorcycle():
 
 @onready var bfilt = ButterworthFilter.new()
 
-var surfacecontact = false
 # brushtip visible means surface contact
 
 var nextfirstpos = false
@@ -53,6 +53,8 @@ func _process(delta):
 	else:
 		pokeybrushimplementation(bp0, bp1)
 		
+
+
 func bendybrushimplementation(bp0, bp1):
 	#pokeybrushimplementation(bp0, bp1)
 	var bpB = paintplane.global_transform.affine_inverse().basis*$BrushAngle/BrushActual.global_transform.basis
@@ -69,11 +71,19 @@ func bendybrushimplementation(bp0, bp1):
 		var bpBY = (bpBZ/bendybrushlocallength).cross(bpBX)
 		brushtip.transform = Transform3D(Basis(bpBY, bpBZ, bpBX), (bp0 + bpcontact)*0.5)
 		var spotdiam = 	0.005
-		viewportbrush.brushpos(bpcontact - bpBA*spotdiam, bpcontact + bpBA*spotdiam, Vector2(spotdiam*20,0))
+
+		brushcontact.scale.z -= 0.05
+		brushcontact.position = bpcontact
+		brushcontact.visible = (brushcontact.scale.z > 0.0)
+		if not brushcontact.visible:
+			viewportbrush.brushpos(bpcontact - bpBA*spotdiam, bpcontact + bpBA*spotdiam, Vector2(spotdiam*20,0))
 
 	else:
 		brushtip.transform = Transform3D(Basis(bpB.y.normalized(), bpZN*bendybrushlocallength, bpB.x.normalized()), bp0 - bpZN*(bendybrushlocallength*0.5))
-
+		brushcontact.visible = false
+		brushcontact.scale.z = 2.0
+		
+		
 func pokeybrushimplementation(bp0, bp1):
 	if bp0.z < 0 and bp1.z > 0:
 		var lam = inverse_lerp(bp0.z, bp1.z, 0.0)

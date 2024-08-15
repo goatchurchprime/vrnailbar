@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3 uid="uid://bjynpo22pmh6y"]
+[gd_scene load_steps=47 format=3 uid="uid://bjynpo22pmh6y"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_e1dgm"]
 [ext_resource type="PackedScene" uid="uid://ctltchlf2j2r4" path="res://addons/xr-simulator/XRSimulator.tscn" id="1_roqg7"]
@@ -84,6 +84,16 @@ rings = 0
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y5nf6"]
 transparency = 1
 albedo_color = Color(0.32549, 0.733333, 0.709804, 0.592157)
+
+[sub_resource type="SphereMesh" id="SphereMesh_c0hky"]
+radius = 0.01
+height = 0.02
+radial_segments = 10
+rings = 5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7slot"]
+transparency = 1
+albedo_color = Color(0.898039, 0.945098, 0.172549, 0.592157)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_0rjes"]
 top_radius = 0.01
@@ -286,9 +296,14 @@ transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, -2.98023e-08, 1, -0.546,
 text = "E"
 
 [node name="brushtip" type="MeshInstance3D" parent="ViewportMesh"]
-transform = Transform3D(1, 0, 0, 0, 0.1, 0, 0, 0, 1, 0, 0, 0)
+transform = Transform3D(1, -2.32831e-10, 0, 0, 0.1, -2.98023e-08, 0, 0, 1, 0, 0.0319247, 0.0319247)
 mesh = SubResource("CylinderMesh_oymru")
 surface_material_override/0 = SubResource("StandardMaterial3D_y5nf6")
+
+[node name="brushcontact" type="MeshInstance3D" parent="ViewportMesh"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 2, -0.00173291, -0.00815964, 0.046333)
+mesh = SubResource("SphereMesh_c0hky")
+surface_material_override/0 = SubResource("StandardMaterial3D_7slot")
 
 [node name="brushlag" type="MeshInstance3D" parent="ViewportMesh"]
 transform = Transform3D(1, 0, 0, 0, 0.1, 0, 0, 0, 1, 0, 0, 0)
